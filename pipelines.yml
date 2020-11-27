@@ -2,14 +2,14 @@ resources:
   - name: dbp_build_info_1
     type: BuildInfo
     configuration:
-      sourceArtifactory: demoArt
+      sourceArtifactory: art_v
       buildName: dbp_build
       buildNumber: 1    
 
   - name: dbp_promoted_build_info_1
     type: BuildInfo
     configuration:
-      sourceArtifactory: demoArt
+      sourceArtifactory: art_v
       buildName: backend_build
       buildNumber: 1
 
