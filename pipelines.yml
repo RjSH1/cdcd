@@ -1,12 +1,12 @@
 resources:
-  - name: dbp_build_infooo
+  - name: dbp_build_info_1
     type: BuildInfo
     configuration:
       sourceArtifactory: zen_art
       buildName: dbp_build
       buildNumber: 1    
 
-  - name: dbp_promoted_build_info
+  - name: dbp_promoted_build_info_1
     type: BuildInfo
     configuration:
       sourceArtifactory: demoArt
@@ -14,7 +14,7 @@ resources:
       buildNumber: 1
 
   # Release bundle
-  - name: release_bundle
+  - name: release_bundle_1
     type: ReleaseBundle
     configuration:
       sourceDistribution: pipe_master_dist
@@ -22,7 +22,7 @@ resources:
       version: v1.0.0
  
   # Signed version of the same release bundle
-  - name: signed_bundle
+  - name: signed_bundle_1
     type: ReleaseBundle
     configuration:
       sourceDistribution: pipe_master_dist
@@ -53,12 +53,12 @@ pipelines:
           sign: false
           description: "some random test description"
           inputResources:
-            - name: dbp_build_infooo
+            - name: dbp_build_info_1
               trigger: true
-            - name: dbp_promoted_build_info
+            - name: dbp_promoted_build_info_1
               trigger: true
           outputResources:
-            - name: release_bundle
+            - name: release_bundle_1
           releaseNotes:
             syntax: markdown
             content: |
@@ -70,14 +70,14 @@ pipelines:
         type: SignReleaseBundle
         configuration:
           inputResources:
-            - name: release_bundle
+            - name: release_bundle_1
           outputResources:
-            - name: signed_bundle
+            - name: signed_bundle_1
  
       - name: distribute
         type: DistributeReleaseBundle
         configuration:
           dryRun: false
           inputResources:
-            - name: signed_bundle
-            - name: distribution_rules
+            - name: signed_bundle_1
+            - name: distribution_rules_1
