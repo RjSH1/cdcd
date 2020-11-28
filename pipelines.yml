@@ -1,16 +1,16 @@
-resources:
-  - name: dbp_build_info_1
-    type: BuildInfo
-    configuration:
-      sourceArtifactory: art_v
-      buildName: dbp_build
-      buildNumber: 1    
+resources:   
+#  - name: dbp_promoted_build_info_1
+#    type: BuildInfo
+#    configuration:
+#      sourceArtifactory: art_v
+#      buildName: backend_build
+#      buildNumber: 1
 
-  - name: dbp_promoted_build_info_1
+  - name: dbp_promoted_build_info
     type: BuildInfo
     configuration:
-      sourceArtifactory: art_v
-      buildName: backend_build
+      sourceArtifactory: zen_art
+      buildName: docker_build
       buildNumber: 1
 
   # Release bundle
