@@ -5,7 +5,7 @@ resources:
 #      sourceArtifactory: art_v
 #      buildName: backend_build
 #      buildNumber: 1
-  - name: dbp_repo
+  - name: dbp_repo111
     type: GitRepo
     configuration:
       gitProvider: zen1                       # <-- replace with your integration
