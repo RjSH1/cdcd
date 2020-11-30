@@ -43,27 +43,7 @@ resources:
 
 pipelines:
   - name: demo_release_mgmt
-    steps:
-      - name: bundle
-        type: CreateReleaseBundle
-        configuration:
-          releaseBundleName: demo_rb
-          releaseBundleVersion: v1.0.${run_number}
-          dryRun: false
-          sign: false
-          description: "some random test description"
-          inputResources:
-            - name: dbp_promoted_build_info_1
-              trigger: true
-          outputResources:
-            - name: release_bundle_1
-          releaseNotes:
-            syntax: markdown
-            content: |
-              ## Heading
-                * Bullet
-                * Points
-             
+    steps:             
       - name: sign
         type: SignReleaseBundle
         configuration:
