@@ -1,24 +1,24 @@
 resources:
   # Build info of first build to bundle
-  #- name: gosvc_promoted_build_info
-   # type: BuildInfo
-    #configuration:
-     # sourceArtifactory: art_v
-      #buildName: docker_push
-      #buildNumber: 1
-  #- name: appl_promoted_build_info_for_edge
-   # type: BuildInfo
-    #configuration:
-     # sourceArtifactory: art_v
-      #buildName: go_build_pipeline
-      #buildNumber: 1  
-      
+  - name: gosvc_promoted_build_info
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: art_v
+      buildName: docker_push
+      buildNumber: 1
   - name: appl_promoted_build_info_for_edge
     type: BuildInfo
     configuration:
       sourceArtifactory: art_v
-      buildName: app_dev_pipeline_su204
-      buildNumber: 1       
+      buildName: go_build_pipeline
+      buildNumber: 1  
+      
+  #- name: appl_promoted_build_info_for_edge
+   # type: BuildInfo
+    #configuration:
+     # sourceArtifactory: art_v
+      #buildName: app_dev_pipeline_su204
+      #buildNumber: 1       
 
   # Release bundle
   - name: release_bundle
@@ -60,10 +60,10 @@ pipelines:
           sign: false
           description: "some random test description"
           inputResources:
-            #- name: gosvc_promoted_build_info
-             # trigger: true
+            - name: gosvc_promoted_build_info
+              trigger: true
             - name: appl_promoted_build_info_for_edge
-              trigger: true              
+              trigger: true                           
           outputResources:
             - name: release_bundle
           releaseNotes:
