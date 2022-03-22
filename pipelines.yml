@@ -1,55 +1,131 @@
+template: true   # required for local templates
+valuesFilePath: ./values.yml
+
 resources:
-  # Build info of first build to bundle
+  - name: app_repo
+    type: GitRepo
+    configuration:
+      gitProvider: {{ .Values.gitIntegration }}                      
+      path: {{ .Values.gitRepositoryPath }}    
+      branches:
+        include: master
+
+  - name: app_buildinfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: {{ .Values.artifactoryIntegration }}
+
+  - name: app_promoted_buildinfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: {{ .Values.artifactoryIntegration }}
+      
   - name: gosvc_promoted_build_info
     type: BuildInfo
     configuration:
-      sourceArtifactory: art_v
-      buildName: docker_push
-      buildNumber: 1
-  - name: appl_promoted_build_info_for_edge
-    type: BuildInfo
-    configuration:
-      sourceArtifactory: art_v
-      buildName: go_build_pipeline
-      buildNumber: 1  
+      sourceArtifactory: demoArt
+      buildName: svc_build
+      buildNumber: 1      
       
-  #- name: appl_promoted_build_info_for_edge
-   # type: BuildInfo
-    #configuration:
-     # sourceArtifactory: art_v
-      #buildName: app_dev_pipeline_su204
-      #buildNumber: 1       
-
-  # Release bundle
   - name: release_bundle
     type: ReleaseBundle
     configuration:
-      sourceDistribution: dist_test
+      sourceDistribution: myDist
       name: demo_rb
       version: v1.0.0
- 
-  # Signed version of the same release bundle
+
   - name: signed_bundle
     type: ReleaseBundle
     configuration:
-      sourceDistribution: dist_test
+      sourceDistribution: myDist
       name: demo_rb
       version: v1.0.0
- 
-  # Distribution rules
+
   - name: distribution_rules
     type: DistributionRule
     configuration:
-      sourceDistribution: dist_test
+      sourceDistribution: myDist
       serviceName: "*"
       siteName: "*"
       cityName: "*"
       countryCodes:
         - "CN"
-        - "GB"
-        
+        - "GB"      
+
 pipelines:
-  - name: demo_release_mgmt
+  - name: app_dev_pipeline_su204
+    steps:
+      - name: app_build
+        type: DockerBuild
+        configuration:
+          affinityGroup: docker_group
+          dockerFileLocation: .
+          dockerFileName: Dockerfile
+          dockerImageName: {{ .Values.artifactoryUrl }}/{{ .Values.sourceRepository }}/{{ .Values.imageName }}  
+          dockerImageTag: ${run_number}
+          inputResources:
+            - name: app_repo
+          integrations:
+            - name: {{ .Values.artifactoryIntegration }}         
+            
+      - name: app_push
+        type: DockerPush
+        configuration:
+          affinityGroup: docker_group
+          targetRepository: {{ .Values.sourceRepository }}
+          integrations:
+            - name: {{ .Values.artifactoryIntegration }}                            
+          inputSteps:
+            - name: app_build
+
+      - name: publish_app_build
+        type: PublishBuildInfo
+        configuration:
+          affinityGroup: docker_group
+          inputSteps:
+            - name: app_push
+          outputResources:
+            - name: app_buildinfo
+            
+      #- name: xrayScanStep
+      #  type: XrayScan
+      #  configuration:
+      #    inputResources:
+      #      - name: app_buildinfo   
+
+  - name: app_prod_pipeline_su204
+    steps:
+      - name: app_promote_build
+        type: PromoteBuild
+        configuration:
+          #failOnValidate: true
+          #copy: true
+          targetRepository: {{ .Values.prodRepository }}
+          comment: "promoted via pipeline ${pipeline_name} in run number ${run_number}"
+          inputResources:
+            - name: app_buildinfo
+              trigger: false
+          outputResources:
+            - name: app_promoted_buildinfo
+
+      - name: app_deploy
+        type: Bash
+        configuration:
+          integrations:
+            - name: {{ .Values.artifactoryIntegration }}
+          inputResources:
+            - name: app_promoted_buildinfo
+        execution:
+          onStart:
+            - jfrog rt docker-pull {{ .Values.artifactoryUrl }}/{{ .Values.prodRepository }}/{{ .Values.imageName }}:$res_app_promoted_buildinfo_buildNumber {{ .Values.prodRepository }}
+            #- jfrog rt dl prod-go-local/app
+            #- ls -latr
+          onExecute:
+            - docker run {{ .Values.artifactoryUrl }}/{{ .Values.prodRepository }}/{{ .Values.imageName }}:$res_app_promoted_buildinfo_buildNumber
+ 
+ 
+ 
+  - name: cd_demo_release_mgmt
     steps:
       - name: bundle
         type: CreateReleaseBundle
@@ -61,9 +137,7 @@ pipelines:
           description: "some random test description"
           inputResources:
             - name: gosvc_promoted_build_info
-              trigger: true
-            - name: appl_promoted_build_info_for_edge
-              trigger: true                           
+              trigger: false
           outputResources:
             - name: release_bundle
           releaseNotes:
@@ -72,7 +146,7 @@ pipelines:
               ## Heading
                 * Bullet
                 * Points
-             
+
       - name: sign
         type: SignReleaseBundle
         configuration:
@@ -80,11 +154,11 @@ pipelines:
             - name: release_bundle
           outputResources:
             - name: signed_bundle
- 
+
       - name: distribute
         type: DistributeReleaseBundle
         configuration:
           dryRun: false
           inputResources:
             - name: signed_bundle
-            - name: distribution_rules  
+            - name: distribution_rules 
