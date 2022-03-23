@@ -1,6 +1,7 @@
 gitIntegration: myGithub
 gitRepositoryPath: RjSH1/cdcd  # replace jfrog with your username or org name
-artifactoryIntegration: myArtifactory
+# artifactoryIntegration: myArtifactory
+artifactoryIntegration: demoArt
 imageName: app_docker_image
 # artifactoryUrl: pipe-master.jfrog-pipelines.com   # replace swampup with your server name
 artifactoryUrl: cloud23mar22.jfrogdev.org # do not include https
