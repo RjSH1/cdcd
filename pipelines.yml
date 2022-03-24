@@ -159,7 +159,8 @@ pipelines:
       - name: distribute
         type: DistributeReleaseBundle
         configuration:
-          dryRun: false
+          # dryRun: false
+          dryRun: true
           inputResources:
             - name: signed_bundle
             - name: distribution_rules 
