@@ -49,8 +49,7 @@ resources:
       siteName: "*"
       cityName: "*"
       countryCodes:
-        - "CN"
-        - "GB"      
+        - "*"     
 
 pipelines:
   - name: app_dev_pipeline_su204
