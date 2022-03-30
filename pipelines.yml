@@ -31,21 +31,24 @@ resources:
   - name: release_bundle
     type: ReleaseBundle
     configuration:
-      sourceDistribution: myDist
+      #sourceDistribution: myDist
+      sourceDistribution:  {{ .Values.distributionIntegration }}
       name: demo_rb
       version: v1.0.0
 
   - name: signed_bundle
     type: ReleaseBundle
     configuration:
-      sourceDistribution: myDist
+      #sourceDistribution: myDist
+      sourceDistribution:  {{ .Values.distributionIntegration }}
       name: demo_rb
       version: v1.0.0
 
   - name: distribution_rules
     type: DistributionRule
     configuration:
-      sourceDistribution: myDist
+      #sourceDistribution: myDist
+      sourceDistribution:  {{ .Values.distributionIntegration }}
       serviceName: "*"
       siteName: "*"
       cityName: "*"
