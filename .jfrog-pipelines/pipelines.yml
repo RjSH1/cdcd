@@ -107,7 +107,7 @@ pipelines:
           comment: "promoted via pipeline ${pipeline_name} in run number ${run_number}"
           inputResources:
             - name: app_buildinfo
-              trigger: false
+              trigger: true
           outputResources:
             - name: app_promoted_buildinfo
 
@@ -141,7 +141,7 @@ pipelines:
           inputResources:
             # - name: gosvc_promoted_build_info
             - name: app_promoted_buildinfo
-              trigger: false
+              trigger: true
           outputResources:
             - name: release_bundle
           releaseNotes:
